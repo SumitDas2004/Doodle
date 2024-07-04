@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from "react";
+import React, { useEffect, memo, useMemo } from "react";
 import CanvasDraw from "react-canvas-draw";
 import { useState, useRef } from "react";
 import { Slider } from "rsuite";
@@ -20,10 +20,6 @@ const Canvas = () => {
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
   const players = useSelector((state) => state.roomInfo.players);
 
-  const StompConnection = useSelector(
-    (state) => state.StompConnection.connection
-  );
-
   const sketchPad = useRef({});
   const strokeWidthController = useRef();
 
@@ -31,8 +27,14 @@ const Canvas = () => {
   const [height, setHeight] = new useState((window.innerHeight * 57) / 100);
   const [strokeColor, setStrokeColor] = useState("black");
   const [strokeWidth, setStrokeWidth] = useState(4);
-  const [strokeWidthControllerVisibility, setStrokeWidthControllerVisibility] =
-    useState(false);
+  const [strokeWidthControllerVisibility, setStrokeWidthControllerVisibility] = useState(false);
+
+
+  const StompConnection = useMemo(() => {
+    const con = new client("http://localhost:8080/ws");
+    con.debug = () => {};
+    return con
+  }, []);
 
   const sendSketch = (sketch) => {
     StompConnection.send(
@@ -80,7 +82,7 @@ const Canvas = () => {
 
     const subscription = subscribe();
     return () => {
-      con.disconnect(() => subscription.unsubscribe());
+      subscription.unsubscribe();
     };
   }, []);
 

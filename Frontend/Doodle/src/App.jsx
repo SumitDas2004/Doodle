@@ -7,13 +7,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const dispatch = useDispatch();
 
   const playerId = useSelector((state) => state.roomInfo.playerId);
   const roomId = useSelector((state) => state.roomInfo.roomId);
-  const StompConnection = useSelector(
-    (state) => state.StompConnection.connection
-  );
+
 
   const cleanUpFun = useCallback(() => {
     fetch(
@@ -23,14 +20,11 @@ function App() {
         keepalive: true,
       }
     );
-    StompConnection.disconnect(() => {
-      console.log("bye!");
-    });
   }, [playerId, roomId]);
 
   useEffect(() => {
-    window.addEventListener("unload", cleanUpFun);
-    return () => window.removeEventListener("unload", cleanUpFun);
+    window.addEventListener("beforeunload", cleanUpFun);
+    return () => window.removeEventListener("beforeunload", cleanUpFun);
   }, [playerId, roomId]);
 
   const isPlaying = useSelector((state) => state.roomInfo.isPlaying);

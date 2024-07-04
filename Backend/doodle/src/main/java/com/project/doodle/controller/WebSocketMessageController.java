@@ -21,7 +21,6 @@ import java.util.Map;
 @RestController
 public class WebSocketMessageController {
 
-
     @Autowired
     SimpMessagingTemplate template;
 
@@ -63,6 +62,7 @@ public class WebSocketMessageController {
     @MessageMapping("/drawing/{roomId}")
     @SendTo("/topic/drawing/{roomId}")
     public DrawingDTO handleDrawing(@DestinationVariable long roomId, @Payload DrawingDTO request){
+//        System.out.println(roomId);
         return request;
     }
 
@@ -71,6 +71,10 @@ public class WebSocketMessageController {
     @SendTo("/topic/newplayer/{roomId}")
     public Player handleIncomingPlayer(@DestinationVariable long roomId, @Payload Player request){
         return request;
+    }
+
+    public void endTurn(long roomId, List<Player> players ){
+        this.template.convertAndSend("/topic/endturn/"+roomId, players);
     }
 
 

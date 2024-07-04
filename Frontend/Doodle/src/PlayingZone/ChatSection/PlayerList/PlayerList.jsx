@@ -38,12 +38,26 @@ const PlayerList = () => {
     return subscription
   };
 
+  const subscribeToTurnEnds = () => {
+    const con = client("http://localhost:8080/ws");
+    con.debug = () => {};
+    let subscription;
+    con.connect({}, () => {
+      subscription = con.subscribe(`/topic/endturn/${roomId}`, (players) => {
+        players = JSON.parse(players.body)
+      });
+    });
+    return subscription
+  };
+
   useEffect(() => {
     const newPlayerSubscription = subscribeToNewPlayer()
     const exitingPlayerSubscription = subscribeToExitingPlayer()
+    const turnEndSubscription = subscribeToTurnEnds()
     return ()=>{
-      con.disconnect(()=>newPlayerSubscription.unsubscribe())
-      con.disconnect(()=>exitingPlayerSubscription.unsubscribe())
+      newPlayerSubscription.unsubscribe()
+      exitingPlayerSubscription.unsubscribe()
+      turnEndSubscription.unsubscribe()
     }
   }, [])
   

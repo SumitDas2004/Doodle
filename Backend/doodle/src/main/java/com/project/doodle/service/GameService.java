@@ -4,11 +4,13 @@ import com.project.doodle.constants.DataStore;
 import com.project.doodle.controller.WebSocketMessageController;
 import com.project.doodle.dto.game.StartGameRequestDTO;
 import com.project.doodle.dto.game.StartTurnRequestDTO;
+import com.project.doodle.entity.Player;
 import com.project.doodle.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,9 +50,9 @@ public class GameService {
         Room room = DataStore.currentRooms.get(roomId);
         room.setWord("");
         room.setTurnRunning(false);
-        room.setTurnEndsAt(System.currentTimeMillis()+1000*60);
+        room.setTurnEndsAt(System.currentTimeMillis());
         room.getQ().poll();
         room.setTurn(room.getQ().peek());
-        wsController.sendRoomInformation(room);
+        wsController.endTurn(roomId, room.getPlayers());
     }
 }

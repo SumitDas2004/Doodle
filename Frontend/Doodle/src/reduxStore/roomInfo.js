@@ -12,6 +12,7 @@ const initialState = {
     curRound:0,
     turnEndsAt:0,
     gameRunning:false,
+    turnRunning:false,
     wordLen:0,
     guessedWord:false,
     word:""
@@ -23,7 +24,7 @@ const roomInfoSlice = createSlice({
     reducers: {
         changeRoomInfo: (state, action)=>{
             state.isPlaying = action.payload.isPlaying
-            state.players.push(...action.payload.players)
+            state.players=[...state.players, ...action.payload.players]
             state.roomId = action.payload.roomId
             state.playerId = action.payload.playerId
             state.playerName = action.payload.playerName
@@ -39,12 +40,10 @@ const roomInfoSlice = createSlice({
             state.word = ""
         },
         addPlayer:(state, action)=>{
-            state.players.push(action.payload)
+            state.players=[...state.players, action.payload]
         },
         removePlayer:(state, action)=>{
-            let ind = 0;
-            while(state.players[ind].id!=action.payload.playerId)ind++;
-            state.players.splice(ind, 1)
+            state.players = state.players.filter(player=>player.id!==action.payload.playerId)
         },
         setOwner:(state, action)=>{
             state.owner = action.payload
@@ -63,6 +62,9 @@ const roomInfoSlice = createSlice({
         },
         setWord: (state, action)=>{
             state.word = action.payload
+        },
+        changePlayerDetails:(state, action)=>{
+            state.players=[...action.payload]
         }
     }
 })

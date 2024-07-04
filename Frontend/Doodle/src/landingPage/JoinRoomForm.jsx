@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useMemo } from "react";
 import { setIsJoiningRoom } from "../reduxStore/isJoiningRoomReducer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changeRoomInfo } from "../reduxStore/roomInfo";
 import AvatarStore from "./AvatarStore";
 import { toast } from "react-toastify";
+import { client } from "stompjs";
 
 const JoinRoomForm = ({ formState }) => {
   const [playerNameInput, setPlayerNameInput] = useState("");
@@ -12,27 +13,25 @@ const JoinRoomForm = ({ formState }) => {
 
   const [roomIdInput, setRoomIdInput] = useState("");
   const dispatch = useDispatch();
-  const StompConnection = useSelector(
-    (state) => state.StompConnection.connection
-  );
 
-  //sending info of new joining player to other clients
+  const StompConnection = useMemo(() => {
+    const con = new client("http://localhost:8080/ws");
+    con.debug = () => {};
+    return con
+  }, []);
+
   const sendPlayerInfo = (player, roomId) => {
-    StompConnection.send(
-      `/app/newplayer/${roomId}`,
-      {},
-      JSON.stringify(player)
-    );
+    StompConnection.send(`/app/newplayer/${roomId}`, {}, JSON.stringify(player));
   };
 
   const joinRoom = useCallback(() => {
-    if(playerNameInput.trim().length===0){
-      toast.error('Player Name can\'t be empty');
-      return ;
+    if (playerNameInput.trim().length === 0) {
+      toast.error("Player Name can't be empty");
+      return;
     }
-    if(roomIdInput.trim().length===0){
-      toast.error('Room Id can\'t be empty');
-      return ;
+    if (roomIdInput.trim().length === 0) {
+      toast.error("Room Id can't be empty");
+      return;
     }
     dispatch(setIsJoiningRoom(true));
     axios({
@@ -50,7 +49,7 @@ const JoinRoomForm = ({ formState }) => {
           dispatch(
             changeRoomInfo({
               ...data,
-              isPlaying: true
+              isPlaying: true,
             })
           );
           sendPlayerInfo(
@@ -73,6 +72,7 @@ const JoinRoomForm = ({ formState }) => {
         dispatch(setIsJoiningRoom(false));
       });
   }, [playerNameInput, playerAvatar, roomIdInput]);
+
 
   return (
     <div className="h-full w-1/2 overflow-hidden flex justify-center items-center">

@@ -22,7 +22,6 @@ const Chats = () => {
         subscription = con.subscribe(`/topic/message/${roomId}`, (message)=>{
           const parsedMesage =  JSON.parse(message.body)
           setMessages((prev)=>[...prev, parsedMesage])
-          console.log(parsedMesage.senderId+" "+playerId)
           if(parsedMesage.rightGuess && parsedMesage.senderId===playerId){
             dispatcher(setGuessedWord(true))
           }

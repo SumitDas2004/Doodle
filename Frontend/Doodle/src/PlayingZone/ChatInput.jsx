@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { client } from "stompjs";
 
 const ChatInput = () => {
   const [message, setMessage] = useState("");
@@ -11,7 +12,11 @@ const ChatInput = () => {
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
   const guessedWord = useSelector((state) => state.roomInfo.guessedWord);
 
-  const StompConnection  = useSelector(state=>state.StompConnection.connection)
+  const StompConnection = useMemo(() => {
+    const con = new client("http://localhost:8080/ws");
+    con.debug = () => {};
+    return con
+  }, []);
 
   const sendMessage = () => {
     if(message.trim().length==0){

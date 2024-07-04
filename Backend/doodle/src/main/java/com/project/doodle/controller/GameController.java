@@ -23,4 +23,8 @@ public class GameController {
     public void startTurn(@RequestBody StartTurnRequestDTO request){
         gameService.startTurn(request);
     }
+    @GetMapping("/turn/end/{roomId}")
+    public void endTurn(@PathVariable long roomId){
+        gameService.stopTurn(roomId);
+    }
 }

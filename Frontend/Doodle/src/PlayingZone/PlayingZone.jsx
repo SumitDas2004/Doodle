@@ -1,9 +1,8 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useMemo } from "react";
 import Canvas from "./Canvas";
 import ChatInput from "./ChatInput";
 import ChatSection from "./ChatSection/ChatSection";
 import { useDispatch, useSelector } from "react-redux";
-import StompConnection from "../reduxStore/StompConnection";
 import axios from "axios";
 import { client } from "stompjs";
 import { startGame } from "../reduxStore/roomInfo";
@@ -12,6 +11,12 @@ const PlayingZone = () => {
   const playerId = useSelector((state) => state.roomInfo.playerId);
   const roomId = useSelector((state) => state.roomInfo.roomId);
   const dispatch = useDispatch();
+
+  const StompConnection = useMemo(() => {
+    const con = new client("http://localhost:8080/ws");
+    con.debug = () => {};
+    return con
+  }, []);
 
   useEffect(() => {
 

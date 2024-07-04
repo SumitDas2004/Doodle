@@ -4,16 +4,25 @@ import { useSelector } from "react-redux";
 const Header = () => {
   const turnEndsAt = useSelector((state) => state.roomInfo.turnEndsAt);
   const wordLen = useSelector((state) => state.roomInfo.wordLen);
-  const word = useSelector(state=>state.roomInfo.word)
-
+  const word = useSelector((state) => state.roomInfo.word);
+  const roomId = useSelector((state) => state.roomInfo.roomId);
   const [timeLeft, setTimeLeft] = new useState(60);
+
+  const stopTurn = () => {
+    fetch("http://localhost:8080/game/turn/end" + roomId);
+  };
+
   useEffect(() => {
-    if (wordLen && wordLen > 0 && timeLeft >= 0)
+    if (wordLen && wordLen > 0 && timeLeft >= 0) {
+      if (timeLeft === 0) {
+        stopTurn();
+      }
       setTimeout(() => {
         const newTime = (turnEndsAt - Date.now()) / 1000;
         setTimeLeft(Math.round(newTime));
       }, 1000);
-  }, [timeLeft, wordLen]); //change in wordlen means new turn has started, so the counter needs to start!
+    }
+  }, [timeLeft, wordLen]); //change in wordlen means new turn has started, so the counter needs to start. Hence when a round stops always change the wordlen to 0.
 
   return (
     <div className="w-full h-[5%] bg-whihte sticky grid-cols-3 top-0 bg-frontBlue text-white font-semibold grid items-center justify-center">

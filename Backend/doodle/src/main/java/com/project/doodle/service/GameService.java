@@ -4,13 +4,11 @@ import com.project.doodle.constants.DataStore;
 import com.project.doodle.controller.WebSocketMessageController;
 import com.project.doodle.dto.game.StartGameRequestDTO;
 import com.project.doodle.dto.game.StartTurnRequestDTO;
-import com.project.doodle.entity.Player;
 import com.project.doodle.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,11 +34,7 @@ public class GameService {
         Room room = DataStore.currentRooms.get(request.getRoomId());
         room.setWord(request.getWord());
         room.setTurnRunning(true);
-        room.setTurnEndsAt(System.currentTimeMillis()+60000);
-        if(room.getQ().isEmpty()){
-            room.setCurRound(room.getCurRound()+1);
-            room.setQ(new LinkedList<>(room.getPlayers().stream().map(player->player.getId()).collect(Collectors.toList())));
-        }
+        room.setTurnEndsAt(System.currentTimeMillis()+10000);
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);
     }
@@ -52,7 +46,12 @@ public class GameService {
         room.setTurnRunning(false);
         room.setTurnEndsAt(System.currentTimeMillis());
         room.getQ().poll();
+        if(room.getQ().isEmpty()){
+            room.setCurRound(room.getCurRound()+1);
+            room.setQ(new LinkedList<>(room.getPlayers().stream().map(player->player.getId()).collect(Collectors.toList())));
+        }
         room.setTurn(room.getQ().peek());
+        wsController.sendRoomInformation(room);
         wsController.endTurn(roomId, room.getPlayers());
     }
 }

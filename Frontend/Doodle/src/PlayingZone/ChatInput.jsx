@@ -48,7 +48,7 @@ const ChatInput = () => {
       <button
         className=" disabled:cursor-not-allowed active:hover:bg-[#fad8de] shadow-sm shadow-black rounded-sm py-2 m-2 px-3 hover:bg-[#fcb1be] transition-colors bg-pink font-semibold text-white"
         onClick={sendMessage}
-        disabled={turn===playerId || guessedWord}
+        disabled={(turn===playerId && turnRunning) || guessedWord}
       >
         Send
       </button>

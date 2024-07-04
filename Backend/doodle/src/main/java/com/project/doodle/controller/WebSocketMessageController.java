@@ -62,7 +62,6 @@ public class WebSocketMessageController {
     @MessageMapping("/drawing/{roomId}")
     @SendTo("/topic/drawing/{roomId}")
     public DrawingDTO handleDrawing(@DestinationVariable long roomId, @Payload DrawingDTO request){
-//        System.out.println(roomId);
         return request;
     }
 

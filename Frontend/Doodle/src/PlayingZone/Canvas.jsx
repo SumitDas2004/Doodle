@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { generateSlug } from "random-word-slugs";
 import { toast } from "react-toastify";
 import { setWord } from "../reduxStore/roomInfo";
+import ScorePage from "./score/ScorePage";
 
 const Canvas = () => {
   const dispatcher = useDispatch()
@@ -19,6 +20,7 @@ const Canvas = () => {
   const gameRunning = useSelector((state) => state.roomInfo.gameRunning);
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
   const players = useSelector((state) => state.roomInfo.players);
+  const scorePageVisible = useSelector(state=>state.scorePage.isScoreVisible)
 
   const sketchPad = useRef({});
   const strokeWidthController = useRef();
@@ -110,10 +112,11 @@ const Canvas = () => {
   };
 
   return (
-    <section className="w-full h-[60%] relative">
+    <section id="canvasContainer" className="w-full h-[60%] relative">
       {/* Shown when the game is yet to start */}
+      {scorePageVisible &&  <ScorePage />}
       {!gameRunning && (
-        <div className=" z-50 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
+        <div className=" z-20 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
           {owner === playerId ? (
             <button
               onClick={() => {
@@ -131,8 +134,8 @@ const Canvas = () => {
         </div>
       )}
       {/* Shown when the user with turn choosing a word */}
-      {gameRunning && !turnRunning && (
-        <div className="z-50 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
+      {gameRunning && !turnRunning && !scorePageVisible &&(
+        <div className="z-20 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
           {turn === playerId ? (
             <div className="w-fit h-fit flex flex-row justify-center items-center">
               <input
@@ -263,3 +266,4 @@ const Canvas = () => {
 };
 
 export default memo(Canvas);
+

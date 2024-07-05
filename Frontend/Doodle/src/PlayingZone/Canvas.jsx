@@ -8,8 +8,10 @@ import { client } from "stompjs";
 import { useDispatch, useSelector } from "react-redux";
 import { generateSlug } from "random-word-slugs";
 import { toast } from "react-toastify";
-import { setWord } from "../reduxStore/roomInfo";
+import { setWord, endGame } from "../reduxStore/roomInfo";
 import ScorePage from "./score/ScorePage";
+import FinalScorePage from './score/FinalScorePage'
+import {showFinalScorePage} from '../reduxStore/scorePage'
 
 const Canvas = () => {
   const dispatcher = useDispatch()
@@ -21,6 +23,9 @@ const Canvas = () => {
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
   const players = useSelector((state) => state.roomInfo.players);
   const scorePageVisible = useSelector(state=>state.scorePage.isScoreVisible)
+  const finalScorePageVisible = useSelector(state=>state.scorePage.isFinalScoreVisible)
+  const curRound = useSelector((state) => state.roomInfo.curRound);
+  const maxRounds = useSelector((state) => state.roomInfo.maxRounds);
 
   const sketchPad = useRef({});
   const strokeWidthController = useRef();
@@ -33,7 +38,7 @@ const Canvas = () => {
 
 
   const StompConnection = useMemo(() => {
-    const con = new client("http://localhost:8080/ws");
+    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -55,18 +60,23 @@ const Canvas = () => {
   };
 
   const subscribe = () => {
-    const con = client("http://localhost:8080/ws");
+    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
-    let subscription;
     con.connect({}, () => {
-      subscription = con.subscribe(`/topic/drawing/${roomId}`, (sketch) => {
+      con.subscribe(`/topic/drawing/${roomId}`, (sketch) => {
         sketch = JSON.parse(sketch.body);
         if (sketch.senderId !== playerId) {
           sketchPad.current.loadSaveData(sketch.drawing);
         }
       });
+      con.subscribe(`/topic/endgame/${roomId}`, data=>{
+        data = JSON.parse(data.body)
+        if(data.endGame){
+          dispatcher(showFinalScorePage())
+          dispatcher(endGame())
+        }
+      })
     });
-    return subscription;
   };
 
   useEffect(() => {
@@ -82,14 +92,15 @@ const Canvas = () => {
       setHeight((window.innerHeight * 57) / 100);
     });
 
-    const subscription = subscribe();
-    return () => {
-      subscription.unsubscribe();
-    };
+    subscribe();
   }, []);
 
+  useEffect(() => {
+    if(curRound>maxRounds && owner===playerId && !scorePageVisible)startTurn('')    
+  }, [scorePageVisible])
+
   const startGame = () => {
-    fetch("http://localhost:8080/game/start", {
+    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -101,7 +112,7 @@ const Canvas = () => {
 
   const startTurn = (word) => {
     dispatcher(setWord(word))
-    fetch("http://localhost:8080/game/turn/start", {
+    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/turn/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -111,12 +122,17 @@ const Canvas = () => {
     });
   };
 
+  useEffect(()=>{
+    sketchPad.current.clear()
+  }, [turn])
+
   return (
     <section id="canvasContainer" className="w-full h-[60%] relative">
       {/* Shown when the game is yet to start */}
+      {finalScorePageVisible && <FinalScorePage />}
       {scorePageVisible &&  <ScorePage />}
-      {!gameRunning && (
-        <div className=" z-20 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
+      {!gameRunning && !finalScorePageVisible && (
+        <div className=" z-20 absolute h-full w-full bg-[#000000b1] flex justify-center items-center flex-col">
           {owner === playerId ? (
             <button
               onClick={() => {
@@ -124,7 +140,7 @@ const Canvas = () => {
                   toast.info("Waiting for more players to join.");
                 } else startGame();
               }}
-              className="px-3 py-2 font-bold bg-pink text-white"
+              className="px-3 py-2 font-bold hover:red-400 active:bg-[#fad8de] hover:bg-[#fcb1be] transition-colors bg-pink text-white"
             >
               Start
             </button>
@@ -135,7 +151,7 @@ const Canvas = () => {
       )}
       {/* Shown when the user with turn choosing a word */}
       {gameRunning && !turnRunning && !scorePageVisible &&(
-        <div className="z-20 absolute h-full w-full bg-[#0000007b] flex justify-center items-center flex-col">
+        <div className="z-20 absolute h-full w-full bg-[#000000b2] flex justify-center items-center flex-col">
           {turn === playerId ? (
             <div className="w-fit h-fit flex flex-row justify-center items-center">
               <input
@@ -173,7 +189,7 @@ const Canvas = () => {
       )}
       <div
         onClick={() => {
-          if (playerId == 1) sendSketch(sketchPad.current.getSaveData());
+          if (playerId == turn) sendSketch(sketchPad.current.getSaveData());
         }}
         className="w-full h-full cursor-pointer flex items-end justify-center"
       >
@@ -187,8 +203,8 @@ const Canvas = () => {
             immediateLoading={true}
             canvasHeight={height}
             canvasWidth={width}
-            catenaryColor={strokeColor}
-            disabled={playerId != 1}
+            catenaryColor={playerId!=turn?'white':strokeColor}
+            disabled={playerId != turn}
           />
         </div>
 

@@ -32,6 +32,10 @@ public class GameService {
     //used to start a new turn
     public void startTurn(StartTurnRequestDTO request) {
         Room room = DataStore.currentRooms.get(request.getRoomId());
+        if(room.getCurRound()>room.getMaxRounds()){
+            wsController.endGame(room.getId());
+            return ;
+        }
         room.setWord(request.getWord());
         room.setTurnRunning(true);
         room.setTurnEndsAt(System.currentTimeMillis()+10000);
@@ -42,7 +46,6 @@ public class GameService {
     //used to stop current turn
     public void stopTurn(long roomId) {
         Room room = DataStore.currentRooms.get(roomId);
-        room.setWord("");
         room.setTurnRunning(false);
         room.setTurnEndsAt(System.currentTimeMillis());
         room.getQ().poll();
@@ -52,6 +55,7 @@ public class GameService {
         }
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);
-        wsController.endTurn(roomId, room.getPlayers());
+        wsController.endTurn(roomId, room.getPlayers(), room.getWord());
+        room.setWord("");
     }
 }

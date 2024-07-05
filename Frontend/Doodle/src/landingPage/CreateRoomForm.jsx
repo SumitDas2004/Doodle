@@ -18,7 +18,7 @@ const CreateRoomForm = ({ formState }) => {
     }
     dispatch(setIsJoiningRoom(true));
     axios({
-      url: "http://localhost:8080/room/",
+      url: `${import.meta.env.WEB_SERVICE_URL}/room/`,
       method: "POST",
       data: { playerName: playerNameInput.trim(), playerAvatar: playerAvatar },
     })
@@ -73,7 +73,7 @@ const CreateRoomForm = ({ formState }) => {
             style={{ transition: "all 500ms" }}
             type="button"
             value="Create Room"
-            className={`bg-pink px-3 py-2 w-min cursor-pointer text-white text-lg rounded-sm relative ${
+            className={`active:bg-[#fad8de] duration-150 hover:bg-[#fcb1be] transition-colors bg-pink px-3 py-2 w-min cursor-pointer text-white text-lg rounded-sm relative ${
               formState !== "create" ? "left-0" : "left-[100%]"
             }`}
             onClick={createRoom}

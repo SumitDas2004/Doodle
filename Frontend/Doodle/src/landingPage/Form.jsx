@@ -14,7 +14,7 @@ const Form = ({ toggleFormState, formState }) => {
         isJoiningRoom
           ? "w-[34vh] h-[30vh] overflow-hidden"
           : " h-[60vh] phone:w-[97%] tablet:w-[94%]"
-      } transition-all duration-200 flex justify-center items-center relative max-w-[600px]`}
+      } min-h-[450px] transition-all duration-200 flex justify-center items-center relative max-w-[600px]`}
     >
       <section className="bg-frontBlue h-[65%] w-[100%] rounded-sm flex shadow-lg shadow-[#0000002f]">
         {!isJoiningRoom && (

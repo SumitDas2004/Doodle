@@ -5,22 +5,36 @@ const scorePageDetailsSlice = createSlice({
   initialState: {
     playerDetails: [],
     isScoreVisible: false,
+    word: "",
+    isFinalScoreVisible: false
   },
   reducers: {
-    changePlayers:(state, action)=>{
-      action.payload.sort((x, y)=>(x.score-y.score)*-1)
-        state.playerDetails = [...action.payload]
-        state.isScoreVisible = true
+    changeDetails: (state, action) => {
+      state.playerDetails = [...action.payload.players];
+      state.isScoreVisible = true;
+      state.word = action.payload.word;
     },
-    showScorePage:(state, action)=>{
-        state.isScoreVisible = true;
+    showScorePage: (state) => {
+      state.isScoreVisible = true;
     },
-    hideScorePage:(state, action)=>{
-        state.isScoreVisible = false;
-    }
+    hideScorePage: (state) => {
+      state.isScoreVisible = false;
+    },
+    showFinalScorePage: (state) => {
+      state.isFinalScoreVisible = true;
+    },
+    hideFinalScorePage: (state) => {
+      state.isFinalScoreVisible = false;
+    },
   },
 });
 
-export const { changePlayers, showScorePage, hideScorePage } = scorePageDetailsSlice.actions
+export const {
+  changeDetails,
+  showScorePage,
+  hideScorePage,
+  showFinalScorePage,
+  hideFinalScorePage,
+} = scorePageDetailsSlice.actions;
 
-export default scorePageDetailsSlice.reducer
+export default scorePageDetailsSlice.reducer;

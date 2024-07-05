@@ -13,7 +13,7 @@ const ChatInput = () => {
   const guessedWord = useSelector((state) => state.roomInfo.guessedWord);
 
   const StompConnection = useMemo(() => {
-    const con = new client("http://localhost:8080/ws");
+    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -43,12 +43,15 @@ const ChatInput = () => {
         className=" disabled:cursor-not-allowed rounded-sm p-2 flex-grow m-2"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        disabled={turn===playerId || guessedWord}
+        disabled={(turn===playerId) || guessedWord}
+        onKeyDown={(e)=>{
+          if(e.key==='Enter')sendMessage()
+        }}
       />
       <button
-        className=" disabled:cursor-not-allowed active:hover:bg-[#fad8de] shadow-sm shadow-black rounded-sm py-2 m-2 px-3 hover:bg-[#fcb1be] transition-colors bg-pink font-semibold text-white"
+        className=" disabled:cursor-not-allowed active:bg-[#fad8de] shadow-sm shadow-black rounded-sm py-2 m-2 px-3 hover:bg-[#fcb1be] transition-colors bg-pink font-semibold text-white"
         onClick={sendMessage}
-        disabled={(turn===playerId && turnRunning) || guessedWord}
+        disabled={(turn===playerId) || guessedWord}
       >
         Send
       </button>

@@ -6,61 +6,47 @@ import {
   addPlayer,
   removePlayer,
   setOwner,
-  updatePlayerDetails,
-  endTurn,
 } from "../../../reduxStore/roomInfo";
-import { changePlayers } from "../../../reduxStore/scorePage";
+import { changeDetails } from "../../../reduxStore/scorePage";
 
 const PlayerList = () => {
   const players = useSelector((state) => state.roomInfo.players);
   const roomId = useSelector((state) => state.roomInfo.roomId);
+  const playerId = useSelector((state) => state.roomInfo.playerId);
+  const turn = useSelector((state) => state.roomInfo.turn);
 
   const dispatch = useDispatch();
 
-  const subscribeToNewPlayer = () => {
-    const con = client("http://localhost:8080/ws");
+  const subscribe = () => {
+    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     con.connect({}, () => {
       con.subscribe(`/topic/newplayer/${roomId}`, (player) => {
         player = JSON.parse(player.body);
         dispatch(addPlayer(player));
       });
-    });
-  };
-
-  const subscribeToExitingPlayer = () => {
-    const con = client("http://localhost:8080/ws");
-    con.debug = () => {};
-    con.connect({}, () => {
       con.subscribe(`/topic/removeplayer/${roomId}`, (player) => {
         player = JSON.parse(player.body);
         dispatch(removePlayer(player));
         dispatch(setOwner(player.newOwner));
       });
-    });
-  };
-
-  const subscribeToTurnEnds = () => {
-    const con = client("http://localhost:8080/ws");
-    con.debug = () => {};
-    con.connect({}, () => {
-      con.subscribe(`/topic/endturn/${roomId}`, (newPlayers) => {
-
-        newPlayers = JSON.parse(newPlayers.body);
+      con.subscribe(`/topic/endturn/${roomId}`, (data) => {
+        data = JSON.parse(data.body);
+        const newPlayers = data.players;
         dispatch(
-          changePlayers(
-            newPlayers
-          )
+          changeDetails({
+            players: newPlayers,
+            word: data.word,
+          })
         );
-        
       });
     });
   };
 
+  
+
   useEffect(() => {
-    subscribeToNewPlayer();
-    subscribeToExitingPlayer();
-    subscribeToTurnEnds();
+    subscribe();
   }, []);
 
   return (
@@ -71,6 +57,8 @@ const PlayerList = () => {
           name={player.name}
           score={player.score}
           avatar={player.avatar}
+          isUser={player.id === playerId}
+          isTurn={turn === player.id}
         />
       ))}
     </section>

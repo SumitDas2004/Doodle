@@ -15,11 +15,10 @@ const Chats = () => {
   const playerId = useSelector(state=>state.roomInfo.playerId)
   
   const subscribe = () => {
-    const con = client('http://localhost:8080/ws')
+    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`)
     con.debug = ()=>{}
-      let subscription;
       con.connect({}, ()=>{
-        subscription = con.subscribe(`/topic/message/${roomId}`, (message)=>{
+        con.subscribe(`/topic/message/${roomId}`, (message)=>{
           const parsedMesage =  JSON.parse(message.body)
           setMessages((prev)=>[...prev, parsedMesage])
           if(parsedMesage.rightGuess && parsedMesage.senderId===playerId){
@@ -27,14 +26,10 @@ const Chats = () => {
           }
         })
       })
-      return subscription
   }
 
   useEffect(() => {
-    const subscription = subscribe()
-    return ()=>{
-      con.disconnect(()=>subscription.unsubscribe())
-    }
+    subscribe()
   }, [])
   
   

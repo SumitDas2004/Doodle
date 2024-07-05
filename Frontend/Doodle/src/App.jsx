@@ -1,10 +1,11 @@
-import { useSelector, useDispatch } from "react-redux";
-import Header from "./Header";
+import { useSelector } from "react-redux";
+import Header from "./PlayingZone/Header";
 import PlayingZone from "./PlayingZone/PlayingZone";
 import LandingPage from "./landingPage/LandingPage";
 import { useCallback, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import React from "react";
 
 function App() {
 
@@ -14,7 +15,7 @@ function App() {
 
   const cleanUpFun = useCallback(() => {
     fetch(
-      `http://localhost:8080/room/leave?player=${playerId}&room=${roomId}`,
+      `${import.meta.env.WEB_SERVICE_URL}/room/leave?player=${playerId}&room=${roomId}`,
       {
         method: "DELETE",
         keepalive: true,

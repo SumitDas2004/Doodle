@@ -2,7 +2,7 @@ package com.project.doodle.controller;
 
 
 import com.project.doodle.constants.DataStore;
-import com.project.doodle.dto.game.StartResponseDTO;
+import com.project.doodle.dto.game.RoomInformationDTO;
 import com.project.doodle.dto.room.DrawingDTO;
 import com.project.doodle.dto.room.MessageDTO;
 import com.project.doodle.entity.Player;
@@ -15,6 +15,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class WebSocketMessageController {
 
                 //Calculating and updating the score of the drawer
 
-                Player drawer = findPlayerById(room.getPlayers(), room.getOwner());
+                Player drawer = findPlayerById(room.getPlayers(), room.getTurn());
                 drawer.setScore(drawer.getScore()+score/3);
 
             }
@@ -72,8 +73,12 @@ public class WebSocketMessageController {
         return request;
     }
 
-    public void endTurn(long roomId, List<Player> players ){
-        this.template.convertAndSend("/topic/endturn/"+roomId, players);
+    public void endTurn(long roomId, List<Player> players, String word ){
+        Map<String, Object> map = new HashMap<>();
+        map.put("players", players);
+        map.put("word", word);
+
+        this.template.convertAndSend("/topic/endturn/"+roomId, map);
     }
 
 
@@ -82,7 +87,7 @@ public class WebSocketMessageController {
     }
 
     public void sendRoomInformation(@Payload Room room){
-        this.template.convertAndSend("/topic/roominfo/"+room.getId(), StartResponseDTO.builder()
+        this.template.convertAndSend("/topic/roominfo/"+room.getId(), RoomInformationDTO.builder()
                 .gameRunning(room.isGameRunning())
                 .turn(room.getTurn())
                 .maxRounds(room.getMaxRounds())
@@ -93,6 +98,12 @@ public class WebSocketMessageController {
                 .build());
     }
 
+    public void endGame(long roomId){
+        Map<String, Object> map = new HashMap<>();
+        map.put("endGame", true);
+
+        this.template.convertAndSend("/topic/endgame/"+roomId, map);
+    }
 
     //utility functions
     private Player findPlayerById(List<Player> players, int id){

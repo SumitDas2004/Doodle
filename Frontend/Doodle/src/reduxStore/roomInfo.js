@@ -41,12 +41,15 @@ const roomInfoSlice = createSlice({
         },
         updatePlayerDetails:(state, action)=>{
             state.players = [...action.payload]
+            state.players.sort((x, y)=>(x.score-y.score)*-1)
         },
         addPlayer:(state, action)=>{
             state.players=[...state.players, action.payload]
+            state.players.sort((x, y)=>(x.score-y.score)*-1)
         },
         removePlayer:(state, action)=>{
             state.players = state.players.filter(player=>player.id!==action.payload.playerId)
+            state.players.sort((x, y)=>(x.score-y.score)*-1)
         },
         setOwner:(state, action)=>{
             state.owner = action.payload
@@ -68,6 +71,7 @@ const roomInfoSlice = createSlice({
         },
         changePlayerDetails:(state, action)=>{
             state.players=[...action.payload]
+            state.players.sort((x, y)=>(x.score-y.score)*-1)
         },
         endTurn:(state, action)=>{
             state.guessedWord = false;
@@ -75,11 +79,20 @@ const roomInfoSlice = createSlice({
             state.word = ""
             state.turnRunning = false
         },
+        endGame:(state, action)=>{
+            state.gameRunning =  false,
+            state.turnRunning = false,
+            state.wordLen = 0,
+            state.guessedWord =  false,
+            state.word = "",
+            state.curRound = 0,
+            state.maxRounds = 0
+        }
     }
 })
 
 
-export const {endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord} = roomInfoSlice.actions
+export const {endGame, endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord} = roomInfoSlice.actions
 
 
 export default roomInfoSlice.reducer

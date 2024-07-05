@@ -67,6 +67,7 @@ public class RoomService {
 
     public int leaveRoom(long roomId, int playerId){
         Player toRem = null;
+        if(DataStore.currentRooms.get(roomId)==null)return 0;
         for(Player player:DataStore.currentRooms.get(roomId).getPlayers()){
             if(playerId==player.getId()) {
                 toRem = player;

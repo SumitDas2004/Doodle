@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 const Header = () => {
   const owner = useSelector(state=>state.roomInfo.owner)
+  const guessedWord = useSelector(state=>state.roomInfo.guessedWord)
   const playerId = useSelector(state=>state.roomInfo.playerId)
   const turnEndsAt = useSelector((state) => state.roomInfo.turnEndsAt);
   const wordLen = useSelector((state) => state.roomInfo.wordLen);
@@ -14,8 +15,11 @@ const Header = () => {
   const [timeLeft, setTimeLeft] = new useState(60);
 
   const stopTurn = () => {
-    fetch("http://localhost:8080/game/turn/end/" + roomId);
+    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/turn/end/` + roomId);
   };
+
+
+  
 
   useEffect(()=>{
     setTimeLeft(Math.round((turnEndsAt-Date.now())/1000))
@@ -35,8 +39,8 @@ const Header = () => {
 
   return (
     <div className="w-full h-[5%] bg-whihte sticky grid-cols-3 top-0 bg-frontBlue text-white font-semibold grid items-center justify-center">
-      <span className=" text-center m-auto">{`${curRound}/${maxRounds}`}</span>
-      {!wordLen ? (
+      {curRound>0 && <span className=" text-center m-auto">{`${curRound}/${maxRounds}`}</span>}
+      {!wordLen || guessedWord ? (
         <span className=" text-center m-auto">Doodle</span>
       ) : (
         <>

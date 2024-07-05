@@ -15,7 +15,7 @@ const JoinRoomForm = ({ formState }) => {
   const dispatch = useDispatch();
 
   const StompConnection = useMemo(() => {
-    const con = new client("http://localhost:8080/ws");
+    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -35,7 +35,7 @@ const JoinRoomForm = ({ formState }) => {
     }
     dispatch(setIsJoiningRoom(true));
     axios({
-      url: "http://localhost:8080/room/join",
+      url: `${import.meta.env.WEB_SERVICE_URL}/room/join`,
       method: "POST",
       data: {
         playerName: playerNameInput.trim(),
@@ -115,7 +115,7 @@ const JoinRoomForm = ({ formState }) => {
             style={{ transition: "all 500ms" }}
             type="button"
             value="Join Room"
-            className={`bg-pink px-3 py-2 w-min cursor-pointer text-white text-lg relative rounded-sm ${
+            className={`active:bg-[#fad8de] hover:bg-[#fcb1be] duration-150 transition-colors bg-pink px-3 py-2 w-min cursor-pointer text-white text-lg relative rounded-sm ${
               formState === "create" ? "left-0" : "-left-[100%]"
             }`}
             onClick={joinRoom}

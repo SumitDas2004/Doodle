@@ -38,7 +38,7 @@ public class GameService {
         }
         room.setWord(request.getWord());
         room.setTurnRunning(true);
-        room.setTurnEndsAt(System.currentTimeMillis()+10000);
+        room.setTurnEndsAt(System.currentTimeMillis()+60000);
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);
     }

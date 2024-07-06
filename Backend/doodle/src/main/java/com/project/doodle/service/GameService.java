@@ -32,10 +32,6 @@ public class GameService {
     //used to start a new turn
     public void startTurn(StartTurnRequestDTO request) {
         Room room = DataStore.currentRooms.get(request.getRoomId());
-        if(room.getCurRound()>room.getMaxRounds()){
-            wsController.endGame(room.getId());
-            return ;
-        }
         room.setWord(request.getWord());
         room.setTurnRunning(true);
         room.setTurnEndsAt(System.currentTimeMillis()+60000);
@@ -52,6 +48,10 @@ public class GameService {
         if(room.getQ().isEmpty()){
             room.setCurRound(room.getCurRound()+1);
             room.setQ(new LinkedList<>(room.getPlayers().stream().map(player->player.getId()).collect(Collectors.toList())));
+        }
+        if(room.getCurRound()>room.getMaxRounds()){
+            wsController.endGame(room.getId());
+            return ;
         }
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);

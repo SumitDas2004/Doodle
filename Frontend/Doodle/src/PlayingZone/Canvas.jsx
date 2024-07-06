@@ -8,10 +8,10 @@ import { client } from "stompjs";
 import { useDispatch, useSelector } from "react-redux";
 import { generateSlug } from "random-word-slugs";
 import { toast } from "react-toastify";
-import { setWord, endGame } from "../reduxStore/roomInfo";
+import { setWord, endGame, setOwner, removePlayer, addPlayer } from "../reduxStore/roomInfo";
 import ScorePage from "./score/ScorePage";
 import FinalScorePage from './score/FinalScorePage'
-import {showFinalScorePage} from '../reduxStore/scorePage'
+import {showFinalScorePage, changeDetails} from '../reduxStore/scorePage'
 
 const Canvas = () => {
   const dispatcher = useDispatch()
@@ -24,8 +24,6 @@ const Canvas = () => {
   const players = useSelector((state) => state.roomInfo.players);
   const scorePageVisible = useSelector(state=>state.scorePage.isScoreVisible)
   const finalScorePageVisible = useSelector(state=>state.scorePage.isFinalScoreVisible)
-  const curRound = useSelector((state) => state.roomInfo.curRound);
-  const maxRounds = useSelector((state) => state.roomInfo.maxRounds);
 
   const sketchPad = useRef({});
   const strokeWidthController = useRef();
@@ -76,6 +74,25 @@ const Canvas = () => {
           dispatcher(endGame())
         }
       })
+      con.subscribe(`/topic/newplayer/${roomId}`, (player) => {
+        player = JSON.parse(player.body);
+        dispatcher(addPlayer(player));
+      });
+      con.subscribe(`/topic/removeplayer/${roomId}`, (player) => {
+        player = JSON.parse(player.body);
+        dispatcher(removePlayer(player));
+        dispatcher(setOwner(player.newOwner));
+      });
+      con.subscribe(`/topic/endturn/${roomId}`, (data) => {
+        data = JSON.parse(data.body);
+        const newPlayers = data.players;
+        dispatcher(
+          changeDetails({
+            players: newPlayers,
+            word: data.word,
+          })
+        );
+      });
     });
   };
 
@@ -277,5 +294,5 @@ const Canvas = () => {
   );
 };
 
-export default memo(Canvas);
+export default Canvas;
 

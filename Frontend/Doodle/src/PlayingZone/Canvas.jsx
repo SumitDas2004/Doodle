@@ -38,7 +38,7 @@ const Canvas = () => {
 
 
   const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -60,7 +60,7 @@ const Canvas = () => {
   };
 
   const subscribe = () => {
-    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     con.connect({}, () => {
       con.subscribe(`/topic/drawing/${roomId}`, (sketch) => {
@@ -100,7 +100,7 @@ const Canvas = () => {
   }, [scorePageVisible])
 
   const startGame = () => {
-    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/start`, {
+    fetch(`${import.meta.env.VITE_WEB_SERVICE_URL}/game/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -112,7 +112,7 @@ const Canvas = () => {
 
   const startTurn = (word) => {
     dispatcher(setWord(word))
-    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/turn/start`, {
+    fetch(`${import.meta.env.VITE_WEB_SERVICE_URL}/game/turn/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

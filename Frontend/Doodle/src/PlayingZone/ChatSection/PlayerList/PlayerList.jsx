@@ -18,7 +18,7 @@ const PlayerList = () => {
   const dispatch = useDispatch();
 
   const subscribe = () => {
-    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     con.connect({}, () => {
       con.subscribe(`/topic/newplayer/${roomId}`, (player) => {

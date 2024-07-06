@@ -15,7 +15,7 @@ const Chats = () => {
   const playerId = useSelector(state=>state.roomInfo.playerId)
   
   const subscribe = () => {
-    const con = client(`${import.meta.env.WEB_SERVICE_URL}/ws`)
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
     con.debug = ()=>{}
       con.connect({}, ()=>{
         con.subscribe(`/topic/message/${roomId}`, (message)=>{

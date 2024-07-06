@@ -13,7 +13,7 @@ const ChatInput = () => {
   const guessedWord = useSelector((state) => state.roomInfo.guessedWord);
 
   const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);

@@ -18,7 +18,7 @@ const CreateRoomForm = ({ formState }) => {
     }
     dispatch(setIsJoiningRoom(true));
     axios({
-      url: `${import.meta.env.WEB_SERVICE_URL}/room/`,
+      url: `${import.meta.env.VITE_WEB_SERVICE_URL}/room/`,
       method: "POST",
       data: { playerName: playerNameInput.trim(), playerAvatar: playerAvatar },
     })

@@ -15,7 +15,7 @@ function App() {
 
   const cleanUpFun = useCallback(() => {
     fetch(
-      `${import.meta.env.WEB_SERVICE_URL}/room/leave?player=${playerId}&room=${roomId}`,
+      `${import.meta.env.VITE_WEB_SERVICE_URL}/room/leave?player=${playerId}&room=${roomId}`,
       {
         method: "DELETE",
         keepalive: true,

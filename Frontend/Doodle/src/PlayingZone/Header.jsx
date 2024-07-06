@@ -15,7 +15,7 @@ const Header = () => {
   const [timeLeft, setTimeLeft] = new useState(60);
 
   const stopTurn = () => {
-    fetch(`${import.meta.env.WEB_SERVICE_URL}/game/turn/end/` + roomId);
+    fetch(`${import.meta.env.VITE_WEB_SERVICE_URL}/game/turn/end/` + roomId);
   };
 
 

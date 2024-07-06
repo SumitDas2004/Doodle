@@ -13,14 +13,14 @@ const PlayingZone = () => {
   const dispatch = useDispatch();
 
   const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
 
   useEffect(() => {
 
-    const stompClient = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const stompClient = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     stompClient.debug = () => {};
     stompClient.connect({}, () => {
       stompClient.subscribe(`/topic/roominfo/${roomId}`, (roomInfo) => {
@@ -31,7 +31,7 @@ const PlayingZone = () => {
 
     return () => {
       axios({
-        url: `${import.meta.env.WEB_SERVICE_URL}/room/?playerId=${playerId}&roomId=${roomId}`,
+        url: `${import.meta.env.VITE_WEB_SERVICE_URL}/room/?playerId=${playerId}&roomId=${roomId}`,
         method: "DELETE",
       });
       StompConnection.send(

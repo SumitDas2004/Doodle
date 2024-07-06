@@ -15,7 +15,7 @@ const JoinRoomForm = ({ formState }) => {
   const dispatch = useDispatch();
 
   const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.WEB_SERVICE_URL}/ws`);
+    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -35,7 +35,7 @@ const JoinRoomForm = ({ formState }) => {
     }
     dispatch(setIsJoiningRoom(true));
     axios({
-      url: `${import.meta.env.WEB_SERVICE_URL}/room/join`,
+      url: `${import.meta.env.VITE_WEB_SERVICE_URL}/room/join`,
       method: "POST",
       data: {
         playerName: playerNameInput.trim(),

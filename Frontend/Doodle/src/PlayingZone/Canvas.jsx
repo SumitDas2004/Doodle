@@ -95,10 +95,6 @@ const Canvas = () => {
     subscribe();
   }, []);
 
-  useEffect(() => {
-    if(curRound>maxRounds && owner===playerId && !scorePageVisible)startTurn('')    
-  }, [scorePageVisible])
-
   const startGame = () => {
     fetch(`${import.meta.env.VITE_WEB_SERVICE_URL}/game/start`, {
       method: "POST",

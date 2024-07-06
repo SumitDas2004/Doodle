@@ -73,13 +73,13 @@ const roomInfoSlice = createSlice({
             state.players=[...action.payload]
             state.players.sort((x, y)=>(x.score-y.score)*-1)
         },
-        endTurn:(state, action)=>{
+        endTurn:(state)=>{
             state.guessedWord = false;
             state.wordLen = 0;
             state.word = ""
             state.turnRunning = false
         },
-        endGame:(state, action)=>{
+        endGame:(state)=>{
             state.gameRunning =  false,
             state.turnRunning = false,
             state.wordLen = 0,

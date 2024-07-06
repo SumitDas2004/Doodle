@@ -12,11 +12,6 @@ const PlayingZone = () => {
   const roomId = useSelector((state) => state.roomInfo.roomId);
   const dispatch = useDispatch();
 
-  const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
-    con.debug = () => {};
-    return con
-  }, []);
 
   useEffect(() => {
 
@@ -28,17 +23,6 @@ const PlayingZone = () => {
         dispatch(startGame(roomInfo));
       });
     });
-
-    return () => {
-      axios({
-        url: `${import.meta.env.VITE_WEB_SERVICE_URL}/room/?playerId=${playerId}&roomId=${roomId}`,
-        method: "DELETE",
-      });
-      StompConnection.send(
-        `/app/removeplayer/${roomId}`,
-        JSON.stringify({ playerId: playerId })
-      );
-    };
   }, []);
 
   return (

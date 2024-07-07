@@ -38,15 +38,15 @@ const Header = () => {
   }, [timeLeft]); //change in wordlen means new turn has started, so the counter needs to start. Hence when a round stops always change the wordlen to 0.
 
   return (
-    <div className="w-full h-[5%] bg-whihte sticky grid-cols-3 top-0 bg-frontBlue text-white font-semibold grid items-center justify-center">
+    <div className="w-full h-[5%] bg-whihte sticky grid-cols-3 top-0 bg-frontBlue text-white text-xl grid items-center justify-center">
       {curRound > 0 && (
-        <span className=" text-center m-auto">{`${curRound}/${maxRounds}`}</span>
+        <span className=" text-center m-auto text-base">{`${curRound}/${maxRounds}`}</span>
       )}
       {!wordLen || guessedWord ? (
-        <span className=" text-center m-auto">Doodle</span>
+        <span className=" pacifico-regular text-center m-auto">Doodle</span>
       ) : (
         <>
-          <span className=" text-center m-auto">
+          <span className=" text-center m-auto text-base">
             {word ? (
               word
             ) : (

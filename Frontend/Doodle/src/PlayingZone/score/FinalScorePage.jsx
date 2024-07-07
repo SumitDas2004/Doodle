@@ -10,9 +10,9 @@ const FinalScorePage = () => {
   const [timer, setTimer] = useState(10);
 
   useEffect(()=>{
+    dispatch(endGame())
     setTimeout(() => {
       if(timer===0){
-        dispatch(endGame())
         dispatch(hideFinalScorePage())
         return ;
       }

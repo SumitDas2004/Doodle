@@ -55,7 +55,12 @@ const ChatInput = () => {
       >
         Send
       </button>
-      <span className="text-gray-800 text-sm mr-2">#{roomId}</span>
+      <span className="text-gray-800 text-sm mr-2" onClick={(e)=>{
+        navigator.clipboard.writeText(e.target.innerText.substring(1))
+        .then(()=>toast.success("RoomId copied successfully."))
+        .catch(()=>toast.error("Failed to copy roomId."))
+      }
+      }>#{roomId}</span>
     </div>
   );
 };

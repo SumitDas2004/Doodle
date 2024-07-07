@@ -17,11 +17,17 @@ import java.util.Map;
 @RequestMapping("/room")
 @CrossOrigin(origins = {"https://doodlefrontend.vercel.app/", "http://localhost:5173"})
 public class RoomController {
+
     @Autowired
     RoomService roomService;
 
     @Autowired
     WebSocketMessageController wsController;
+
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping(){
+        return new ResponseEntity<>("ping", HttpStatusCode.valueOf(200));
+    }
 
     @PostMapping("/")
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomRequestDTO request)  {
@@ -47,16 +53,8 @@ public class RoomController {
     }
 
     @DeleteMapping("/leave")
-    public ResponseEntity<?> leaveRoom(@RequestParam("player") int playerId, @RequestParam("room") long roomId)  {
-        int newOwner = roomService.leaveRoom(roomId, playerId);
-        Map<String, Integer> request = new HashMap<>();
-        request.put("playerId", playerId);
-        request.put("newOwner", newOwner);
-        wsController.removePlayer(roomId, request);
-        Map<String, Object> map = new HashMap<>();
-        map.put("status", 1);
-        map.put("message", "Left room successfully.");
-        return new ResponseEntity<>(map, HttpStatusCode.valueOf(200));
+    public void leaveRoom(@RequestParam("player") int playerId, @RequestParam("room") long roomId)  {
+        roomService.leaveRoom(roomId, playerId);
     }
 
 

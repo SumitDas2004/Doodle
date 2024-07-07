@@ -42,6 +42,7 @@ const roomInfoSlice = createSlice({
         updatePlayerDetails:(state, action)=>{
             state.players = [...action.payload]
             state.players.sort((x, y)=>(x.score-y.score)*-1)
+            // if(state.players.length<=1)endGame()
         },
         addPlayer:(state, action)=>{
             state.players=[...state.players, action.payload]
@@ -50,6 +51,7 @@ const roomInfoSlice = createSlice({
         removePlayer:(state, action)=>{
             state.players = state.players.filter(player=>player.id!==action.payload.playerId)
             state.players.sort((x, y)=>(x.score-y.score)*-1)
+            // if(state.players.length<=1)endGame()
         },
         setOwner:(state, action)=>{
             state.owner = action.payload

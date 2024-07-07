@@ -92,6 +92,7 @@ const Canvas = () => {
             word: data.word,
           })
         );
+        dispatcher(setOwner(data.owner));
       });
       con.subscribe(`/topic/roominfo/${roomId}`, (roomInfo) => {
         roomInfo = JSON.parse(roomInfo.body);

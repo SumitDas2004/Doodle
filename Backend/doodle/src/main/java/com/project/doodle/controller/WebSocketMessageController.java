@@ -75,10 +75,11 @@ public class WebSocketMessageController {
         return request;
     }
 
-    public void endTurn(long roomId, List<Player> players, String word ){
+    public void endTurn(long roomId, List<Player> players, String word, int owner ){
         Map<String, Object> map = new HashMap<>();
         map.put("players", players);
         map.put("word", word);
+        map.put("owner", owner);
 
         this.template.convertAndSend("/topic/endturn/"+roomId, map);
     }

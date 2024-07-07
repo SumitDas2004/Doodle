@@ -4,9 +4,7 @@ import JoinRoomForm from "./JoinRoomForm";
 import { useSelector } from "react-redux";
 
 const Form = ({ toggleFormState, formState }) => {
-
-
-  const isJoiningRoom = useSelector((state)=>state.isJoiningRoom.value);
+  const isJoiningRoom = useSelector((state) => state.isJoiningRoom.value);
 
   return (
     <section
@@ -20,22 +18,31 @@ const Form = ({ toggleFormState, formState }) => {
         {!isJoiningRoom && (
           <>
             <div className="h-full w-1/2 flex justify-center items-center">
-              <div className="w-1/2 h-[100%] flex justify-center items-center">
+              <div className="w-1/2 h-[100%] flex flex-col  justify-center items-center">
+                <span className="pacifico-regular font-bold text-4xl mb-6">
+                  Doodle
+                </span>
+                <span className="inline-block break-all font-white w-max text-white  font-bold mb-6">Don't have a roomId?</span>
+                
                 <button
                   onClick={toggleFormState}
-                  className="px-3 py-2 border-white border-2 rounded-sm font-semibold text-white cursor-pointer z-10"
+                  className="px-2 py-2 w-max border-white border-2 rounded-sm font-semibold text-white cursor-pointer z-10"
                 >
-                  Create
+                  Create Room
                 </button>
               </div>
             </div>
             <div className="h-full w-1/2 flex justify-center items-center">
-              <div className="w-1/2 h-[100%] flex justify-center items-center">
+              <div className="w-1/2 h-[100%] flex items-center flex-col justify-center">
+                <span className="pacifico-regular font-bold text-4xl mb-6">
+                  Doodle
+                </span>
+                <span className="inline-block break-all font-white w-max text-white  font-bold mb-6">Have a roomId?</span>
                 <button
                   onClick={toggleFormState}
-                  className=" rounded-sm px-3 py-2 border-white border-2 font-semibold text-white z-10 cursor-pointer"
+                  className=" rounded-sm px-2 w-max py-2 border-white border-2 font-semibold text-white z-10 cursor-pointer"
                 >
-                  Join
+                  Join Room
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 package com.project.doodle.service;
 
 import com.project.doodle.constants.DataStore;
+import com.project.doodle.controller.WebSocketMessageController;
 import com.project.doodle.dto.room.CreateRoomRequestDTO;
 import com.project.doodle.dto.room.CreateRoomResponseDTO;
 import com.project.doodle.dto.room.JoinRoomDTO;
@@ -8,17 +9,28 @@ import com.project.doodle.entity.Player;
 import com.project.doodle.entity.Room;
 import com.project.doodle.exception.InvalidRoomIdException;
 import com.project.doodle.exception.RoomFullException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 @Service
 public class RoomService {
 
     @Value("${base.id}")
     private long roomId;
+
+    @Autowired
+    WebSocketMessageController wsController;
+
+    @Autowired
+    GameService gameService;
+
+
 
     public CreateRoomResponseDTO createRoom(CreateRoomRequestDTO request)  {
         String playerName = request.getPlayerName();
@@ -29,7 +41,7 @@ public class RoomService {
                 .name(playerName)
                 .avatar(request.getPlayerAvatar())
                 .build();
-        long newRoomId;
+        long newRoomId ;
         synchronized (this){
             newRoomId = ++this.roomId;
         }
@@ -65,21 +77,50 @@ public class RoomService {
         }
     }
 
-    public int leaveRoom(long roomId, int playerId){
+    public void leaveRoom(long roomId, int playerId){
         Player toRem = null;
-        if(DataStore.currentRooms.get(roomId)==null)return 0;
-        for(Player player:DataStore.currentRooms.get(roomId).getPlayers()){
+        Room room = DataStore.currentRooms.get(roomId);
+        if(room==null)return ;
+        for(Player player:room.getPlayers()){
             if(playerId==player.getId()) {
                 toRem = player;
                 break;
             }
         }
-        DataStore.currentRooms.get(roomId).getPlayers().remove(toRem);
-        if(DataStore.currentRooms.get(roomId).getPlayers().isEmpty()) {
+        room.getPlayers().remove(toRem);
+        if(room.getPlayers().isEmpty()) {
             DataStore.currentRooms.remove(roomId);
-            return -1;//Signifies that room is now empty and can be deleted
-        }else if(playerId==DataStore.currentRooms.get(roomId).getOwner()) return DataStore.currentRooms.get(roomId).getPlayers().get(0).getId();
-        else return DataStore.currentRooms.get(roomId).getOwner();
+            return ;
+            //Signifies that room is now empty and can be deleted
+        }
+
+
+
+        if(playerId==room.getTurn()){
+            if(playerId==room.getOwner()) {
+                int newOwner = room.getPlayers().get(0).getId();
+                room.setOwner(newOwner);
+            }
+            gameService.stopTurn(roomId);
+            //When the user with turn leaves the room then the turn needs to end.
+            //So we can simply call end turn. End turn function returns list of all current players
+            //hence no need to call leave room
+
+            return ;
+        }
+        if(playerId==room.getOwner()) {
+            int newOwner = room.getPlayers().get(0).getId();
+            room.setOwner(newOwner);
+        }
+        Map<String, Integer> request = new HashMap<>();
+        request.put("playerId", playerId);
+        request.put("newOwner", room.getOwner());
+        wsController.removePlayer(roomId, request);
+
+        //if only a single player is left then end the game.
+        if(room.getPlayers().size()==1){
+            wsController.endGame(roomId);
+        }
     }
 
 

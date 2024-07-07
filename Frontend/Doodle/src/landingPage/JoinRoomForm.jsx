@@ -29,6 +29,10 @@ const JoinRoomForm = ({ formState }) => {
       toast.error("Player Name can't be empty");
       return;
     }
+    if(playerNameInput.trim().length>12){
+      toast.error('Player Name can be maximum 12 characters long.');
+      return ;
+    }
     if (roomIdInput.trim().length === 0) {
       toast.error("Room Id can't be empty");
       return;

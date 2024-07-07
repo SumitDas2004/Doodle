@@ -16,13 +16,13 @@ const ScorePage = () => {
 
   useEffect(() => {
     setPlayerAndScores(
-      oldPlayerDetails.map((player) => {
-        const correspondingNewPlayer = newPlayerDetails.find(
+      newPlayerDetails.map((player) => {
+        const correspondingNewPlayer = oldPlayerDetails.find(
           (p) => p.id === player.id
         );
         return {
           name: player.name,
-          score: correspondingNewPlayer.score - player.score,
+          score:  player.score - correspondingNewPlayer.score ,
         }; //Calculating score earned in the round
       }).sort((x, y)=>(x.score-y.score)*-1)
     );

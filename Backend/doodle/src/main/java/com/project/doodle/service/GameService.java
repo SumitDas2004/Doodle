@@ -16,6 +16,7 @@ public class GameService {
     @Autowired
     WebSocketMessageController wsController;
 
+
     //used to start a game
     public void startGame(StartGameRequestDTO request){
         Room room = DataStore.currentRooms.get(request.getRoomId());
@@ -49,13 +50,21 @@ public class GameService {
             room.setCurRound(room.getCurRound()+1);
             room.setQ(new LinkedList<>(room.getPlayers().stream().map(player->player.getId()).collect(Collectors.toList())));
         }
+        if(room.getPlayers().size()==1){
+            wsController.endTurn(roomId, room.getPlayers(), room.getWord(), room.getOwner());
+            room.setTurn(room.getQ().peek());
+            wsController.sendRoomInformation(room);
+            wsController.endGame(room.getId());
+            room.setWord("");
+            return ;
+        }
         if(room.getCurRound()>room.getMaxRounds()){
             wsController.endGame(room.getId());
             return ;
         }
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);
-        wsController.endTurn(roomId, room.getPlayers(), room.getWord());
+        wsController.endTurn(roomId, room.getPlayers(), room.getWord(), room.getOwner());
         room.setWord("");
     }
 }

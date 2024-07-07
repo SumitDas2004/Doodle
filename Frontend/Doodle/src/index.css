@@ -26,3 +26,14 @@
   border-left: 0.8rem solid transparent;
   border-right: 0.8rem solid transparent;
 }
+
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-style: normal;
+  color:white;
+  text-shadow: pink 3px 3px;
+  font-weight: 900;
+}
+img{
+  user-select: none;
+}

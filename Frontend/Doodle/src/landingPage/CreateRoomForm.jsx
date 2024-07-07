@@ -16,6 +16,10 @@ const CreateRoomForm = ({ formState }) => {
       toast.error('Player Name can\'t be empty');
       return ;
     }
+    if(playerNameInput.trim().length>12){
+      toast.error('Player Name can be maximum 12 characters long.');
+      return ;
+    }
     dispatch(setIsJoiningRoom(true));
     axios({
       url: `${import.meta.env.VITE_WEB_SERVICE_URL}/room/`,

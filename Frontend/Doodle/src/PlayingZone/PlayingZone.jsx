@@ -1,29 +1,9 @@
-import React, { memo, useEffect, useMemo } from "react";
+import React, { memo } from "react";
 import Canvas from "./Canvas";
 import ChatInput from "./ChatInput";
 import ChatSection from "./ChatSection/ChatSection";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { client } from "stompjs";
-import { startGame } from "../reduxStore/roomInfo";
 
 const PlayingZone = () => {
-  const playerId = useSelector((state) => state.roomInfo.playerId);
-  const roomId = useSelector((state) => state.roomInfo.roomId);
-  const dispatch = useDispatch();
-
-
-  useEffect(() => {
-
-    const stompClient = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
-    stompClient.debug = () => {};
-    stompClient.connect({}, () => {
-      stompClient.subscribe(`/topic/roominfo/${roomId}`, (roomInfo) => {
-        roomInfo = JSON.parse(roomInfo.body);
-        dispatch(startGame(roomInfo));
-      });
-    });
-  }, []);
 
   return (
     <section className="h-[95vh] w-full bg-backBlue flex flex-col items-center">

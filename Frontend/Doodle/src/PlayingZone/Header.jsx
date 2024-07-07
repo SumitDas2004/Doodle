@@ -19,13 +19,15 @@ const Header = () => {
   };
 
   useEffect(() => {
+    if(turnRunning)
     setTimeLeft(Math.round((turnEndsAt - Date.now()) / 1000));
-  }, [turnEndsAt]);
+  }, [turnRunning]);
 
   useEffect(() => {
-    if (wordLen && wordLen > 0 && timeLeft >= 0) {
-      if (timeLeft === 0 && owner === playerId) {
-        stopTurn();
+    if (timeLeft >= 0) {
+      if (timeLeft === 0) {
+        if( owner === playerId )
+          stopTurn();
       } else {
         setTimeout(() => {
           const newTime = (turnEndsAt - Date.now()) / 1000;
@@ -33,7 +35,7 @@ const Header = () => {
         }, 1000);
       }
     }
-  }, [timeLeft, wordLen]); //change in wordlen means new turn has started, so the counter needs to start. Hence when a round stops always change the wordlen to 0.
+  }, [timeLeft]); //change in wordlen means new turn has started, so the counter needs to start. Hence when a round stops always change the wordlen to 0.
 
   return (
     <div className="w-full h-[5%] bg-whihte sticky grid-cols-3 top-0 bg-frontBlue text-white font-semibold grid items-center justify-center">

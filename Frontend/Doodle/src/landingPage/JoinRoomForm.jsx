@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import { changeRoomInfo } from "../reduxStore/roomInfo";
 import AvatarStore from "./AvatarStore";
 import { toast } from "react-toastify";
-import { client } from "stompjs";
+import { over } from "stompjs";
+import SockJS from 'sockjs-client'
 
 const JoinRoomForm = ({ formState }) => {
   const [playerNameInput, setPlayerNameInput] = useState("");
@@ -15,7 +16,8 @@ const JoinRoomForm = ({ formState }) => {
   const dispatch = useDispatch();
 
   const StompConnection = useMemo(() => {
-    const con = new client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
+    const sock = new SockJS(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
+    const con = over(sock);
     con.debug = () => {};
     return con
   }, []);

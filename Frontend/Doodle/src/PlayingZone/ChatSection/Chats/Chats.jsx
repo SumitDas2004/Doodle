@@ -1,7 +1,6 @@
 import React, { memo, useRef, useState, useEffect } from 'react'
 import ChatItem from './ChatItem'
-import SockJS from 'sockjs-client'
-import { over } from "stompjs";
+import { client } from "stompjs";
 import { useSelector, useDispatch } from 'react-redux';
 import { setGuessedWord } from '../../../reduxStore/roomInfo';
 
@@ -16,9 +15,8 @@ const Chats = () => {
   const playerId = useSelector(state=>state.roomInfo.playerId)
   
   const subscribe = () => {
-    const sock = new SockJS(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
-    const con = over(sock);
-    con.debug = ()=>{}
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
+    con.debug = () => {}
       con.connect({}, ()=>{
         con.subscribe(`/topic/message/${roomId}`, (message)=>{
           const parsedMesage =  JSON.parse(message.body)

@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Slider } from "rsuite";
 import "rsuite/Slider/styles/index.css";
 import "rsuite/RangeSlider/styles/index.css";
-import { client, over } from "stompjs";
+import { client } from "stompjs";
 import { useDispatch, useSelector } from "react-redux";
 import { generateSlug } from "random-word-slugs";
 import { toast } from "react-toastify";
@@ -12,7 +12,6 @@ import { setWord, endGame, setOwner, removePlayer, addPlayer, startGame as start
 import ScorePage from "./score/ScorePage";
 import FinalScorePage from './score/FinalScorePage'
 import {showFinalScorePage, changeDetails} from '../reduxStore/scorePage'
-import SockJS from "sockjs-client";
 
 const Canvas = () => {
   const dispatcher = useDispatch()
@@ -37,8 +36,7 @@ const Canvas = () => {
 
 
   const StompConnection = useMemo(() => {
-    const sock = new SockJS(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
-    const con = over(sock);
+   const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);
@@ -60,8 +58,7 @@ const Canvas = () => {
   };
 
   const subscribe = () => {
-    const sock = new SockJS(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
-    const con = over(sock);
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     con.connect({}, () => {
       con.subscribe(`/topic/drawing/${roomId}`, (sketch) => {

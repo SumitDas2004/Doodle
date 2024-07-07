@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { over } from "stompjs";
-import SockJS from 'sockjs-client'
+import { client } from "stompjs";
 
 const ChatInput = () => {
   const [message, setMessage] = useState("");
@@ -14,8 +13,7 @@ const ChatInput = () => {
   const guessedWord = useSelector((state) => state.roomInfo.guessedWord);
 
   const StompConnection = useMemo(() => {
-    const sock = new SockJS(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`)
-    const con = over(sock);
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
     return con
   }, []);

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = {"https://doodlefrontend.vercel.app", "http://localhost:5173"})
+@CrossOrigin(origins = {"https://doodlefrontend.vercel.app/", "http://localhost:5173"})
 @RequestMapping("/game")
 public class GameController {
     @Autowired

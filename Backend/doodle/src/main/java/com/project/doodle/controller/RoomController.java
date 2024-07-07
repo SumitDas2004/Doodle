@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/room")
-@CrossOrigin(origins = {"https://doodlefrontend.vercel.app", "http://localhost:5173"})
+@CrossOrigin(origins = {"https://doodlefrontend.vercel.app/", "http://localhost:5173"})
 public class RoomController {
     @Autowired
     RoomService roomService;

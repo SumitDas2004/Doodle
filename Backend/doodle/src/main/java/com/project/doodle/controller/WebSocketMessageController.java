@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"https://doodlefrontend.vercel.app/", "http://localhost:5173"})
 public class WebSocketMessageController {
 
     @Autowired

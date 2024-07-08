@@ -15,7 +15,8 @@ const initialState = {
     turnRunning:false,
     wordLen:0,
     guessedWord:false,
-    word:""
+    word:"",
+    rightGuesses:0
 }
 
 const roomInfoSlice = createSlice({
@@ -64,6 +65,7 @@ const roomInfoSlice = createSlice({
             state.turnRunning = action.payload.turnRunning
             state.wordLen = action.payload.wordLen
             state.turnEndsAt = action.payload.turnEndsAt
+            state.rightGuesses = 0
         },
         setGuessedWord: (state, action)=>{
             state.guessedWord = action.payload
@@ -80,6 +82,7 @@ const roomInfoSlice = createSlice({
             state.wordLen = 0;
             state.word = ""
             state.turnRunning = false
+            state.rightGuesses = 0
         },
         endGame:(state)=>{
             state.gameRunning =  false,
@@ -89,12 +92,16 @@ const roomInfoSlice = createSlice({
             state.word = "",
             state.curRound = 0,
             state.maxRounds = 0
+            state.rightGuesses = 0
+        },
+        rightGuess:(state)=>{
+            state.rightGuesses+=1 
         }
     }
 })
 
 
-export const {endGame, endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord} = roomInfoSlice.actions
+export const {endGame, endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord, rightGuess} = roomInfoSlice.actions
 
 
 export default roomInfoSlice.reducer

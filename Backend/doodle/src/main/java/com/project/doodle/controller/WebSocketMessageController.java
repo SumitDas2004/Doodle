@@ -31,7 +31,7 @@ public class WebSocketMessageController {
     @MessageMapping("/message/{roomId}")
     @SendTo("/topic/message/{roomId}")
     public MessageDTO handleMessage(@DestinationVariable long roomId, @Payload MessageDTO message){
-//        If a round is running and the message sent by an user matches the current word in the room then that
+//        If a round is running and the message sent by a user matches the current word in the room then that
 //        is a correct guess.
         if(message.isTurnRunning()){
             Room room = DataStore.currentRooms.get(roomId);

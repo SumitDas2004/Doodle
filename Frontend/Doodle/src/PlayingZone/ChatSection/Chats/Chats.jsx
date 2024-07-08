@@ -1,8 +1,9 @@
 import React, { memo, useRef, useState, useEffect } from 'react'
 import ChatItem from './ChatItem'
+
 import { client } from "stompjs";
 import { useSelector, useDispatch } from 'react-redux';
-import { setGuessedWord } from '../../../reduxStore/roomInfo';
+import { rightGuess, setGuessedWord } from '../../../reduxStore/roomInfo';
 
 const Chats = () => {
   let listItemNo = useRef(0)
@@ -23,6 +24,9 @@ const Chats = () => {
           setMessages((prev)=>[...prev, parsedMesage])
           if(parsedMesage.rightGuess && parsedMesage.senderId===playerId){
             dispatcher(setGuessedWord(true))
+          }
+          if(parsedMesage.rightGuess){
+            dispatcher(rightGuess())
           }
         })
       })

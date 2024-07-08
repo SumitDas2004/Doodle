@@ -10,6 +10,7 @@ const ScorePage = () => {
   const newPlayerDetails = useSelector((state) => state.scorePage.playerDetails);
   const oldPlayerDetails = useSelector((state) => state.roomInfo.players);
   const word = useSelector((state) => state.scorePage.word);
+
   const [playerAndScores, setPlayerAndScores] = useState();
   const [timer, setTimer] = useState(5);
 

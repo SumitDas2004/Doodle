@@ -12,6 +12,8 @@ const Header = () => {
   const curRound = useSelector((state) => state.roomInfo.curRound);
   const maxRounds = useSelector((state) => state.roomInfo.maxRounds);
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
+  const rightGuesses = useSelector(state=>state.roomInfo.rightGuesses)
+  const players = useSelector(state=>state.roomInfo.players)
   const [timeLeft, setTimeLeft] = new useState(60);
 
   const stopTurn = () => {
@@ -25,8 +27,8 @@ const Header = () => {
 
   useEffect(() => {
     if (timeLeft >= 0) {
-      if (timeLeft === 0) {
-        if( owner === playerId )
+      if (timeLeft === 0  || (rightGuesses===players.length-1 && players.length>1)) {
+        if( owner === playerId)
           stopTurn();
       } else {
         setTimeout(() => {

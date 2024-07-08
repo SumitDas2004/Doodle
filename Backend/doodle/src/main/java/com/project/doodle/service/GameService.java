@@ -21,6 +21,7 @@ public class GameService {
     public void startGame(StartGameRequestDTO request){
         Room room = DataStore.currentRooms.get(request.getRoomId());
         room.setMaxRounds(request.getMaxRounds());
+        room.setDrawTime(request.getDrawTime());
         room.setCurRound(1);
         room.setGameRunning(true);
         room.setTurnRunning(false);
@@ -35,7 +36,7 @@ public class GameService {
         Room room = DataStore.currentRooms.get(request.getRoomId());
         room.setWord(request.getWord());
         room.setTurnRunning(true);
-        room.setTurnEndsAt(System.currentTimeMillis()+60000);
+        room.setTurnEndsAt(System.currentTimeMillis()+room.getDrawTime()*1000);
         room.setTurn(room.getQ().peek());
         wsController.sendRoomInformation(room);
     }

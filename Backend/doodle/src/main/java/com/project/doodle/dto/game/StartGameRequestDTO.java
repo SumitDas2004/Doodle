@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class StartGameRequestDTO {
     private long roomId;
     private int maxRounds;
+    private int drawTime;
 }
 

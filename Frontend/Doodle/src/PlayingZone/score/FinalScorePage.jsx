@@ -24,7 +24,7 @@ const FinalScorePage = () => {
   }, [])
 
   return (
-    <div><div className=" z-50 h-full w-full absolute bg-[#000000b9] font-semibold flex justify-center items-center flex-col">
+    <div className="  curtainDown z-50 h-full w-full absolute bg-[#000000b9] font-semibold flex justify-center items-center flex-col">
     <div className=" w-full flex justify-end items-end p-10 text-white">
       {timer}s
     </div>
@@ -45,7 +45,6 @@ const FinalScorePage = () => {
           </span>
         ))}
     </div>
-  </div>
   </div>
   )
 }

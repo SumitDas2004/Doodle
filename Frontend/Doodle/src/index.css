@@ -37,3 +37,19 @@
 img{
   user-select: none;
 }
+
+.curtainDown{
+  animation-name: curtainDownAnimation;
+  animation-duration: 200ms;
+  animation-fill-mode: forwards;
+  overflow: hidden;
+}
+
+@keyframes curtainDownAnimation {
+  0% {
+    height:0;
+  }
+  100% {
+    height:100%;
+  }
+}

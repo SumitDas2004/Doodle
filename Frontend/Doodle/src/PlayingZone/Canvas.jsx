@@ -8,13 +8,20 @@ import { client } from "stompjs";
 import { useDispatch, useSelector } from "react-redux";
 import { generateSlug } from "random-word-slugs";
 import { toast } from "react-toastify";
-import { setWord, endGame, setOwner, removePlayer, addPlayer, startGame as start } from "../reduxStore/roomInfo";
+import {
+  setWord,
+  endGame,
+  setOwner,
+  removePlayer,
+  addPlayer,
+  startGame as start,
+} from "../reduxStore/roomInfo";
 import ScorePage from "./score/ScorePage";
-import FinalScorePage from './score/FinalScorePage'
-import {showFinalScorePage, changeDetails} from '../reduxStore/scorePage'
+import FinalScorePage from "./score/FinalScorePage";
+import { showFinalScorePage, changeDetails } from "../reduxStore/scorePage";
 
 const Canvas = () => {
-  const dispatcher = useDispatch()
+  const dispatcher = useDispatch();
   const playerId = useSelector((state) => state.roomInfo.playerId);
   const roomId = useSelector((state) => state.roomInfo.roomId);
   const owner = useSelector((state) => state.roomInfo.owner);
@@ -22,8 +29,12 @@ const Canvas = () => {
   const gameRunning = useSelector((state) => state.roomInfo.gameRunning);
   const turnRunning = useSelector((state) => state.roomInfo.turnRunning);
   const players = useSelector((state) => state.roomInfo.players);
-  const scorePageVisible = useSelector(state=>state.scorePage.isScoreVisible)
-  const finalScorePageVisible = useSelector(state=>state.scorePage.isFinalScoreVisible)
+  const scorePageVisible = useSelector(
+    (state) => state.scorePage.isScoreVisible
+  );
+  const finalScorePageVisible = useSelector(
+    (state) => state.scorePage.isFinalScoreVisible
+  );
 
   const sketchPad = useRef({});
   const strokeWidthController = useRef();
@@ -32,16 +43,19 @@ const Canvas = () => {
   const [height, setHeight] = new useState((window.innerHeight * 57) / 100);
   const [strokeColor, setStrokeColor] = useState("black");
   const [strokeWidth, setStrokeWidth] = useState(4);
-  const [strokeWidthControllerVisibility, setStrokeWidthControllerVisibility] = useState(false);
-
+  const [strokeWidthControllerVisibility, setStrokeWidthControllerVisibility] =
+    useState(false);
+  const [maximumRounds, setMaximumRounds] = useState(3);
+  const [drawTime, setDrawTime] = useState(90);
 
   const StompConnection = useMemo(() => {
-   const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
+    const con = client(`${import.meta.env.VITE_WEB_SERVICE_URL}/ws`);
     con.debug = () => {};
-    return con
+    return con;
   }, []);
 
   const sendSketch = (sketch) => {
+    if(playerId!==turn)return ;
     StompConnection.send(
       `/app/drawing/${roomId}`,
       {},
@@ -67,13 +81,13 @@ const Canvas = () => {
           sketchPad.current.loadSaveData(sketch.drawing);
         }
       });
-      con.subscribe(`/topic/endgame/${roomId}`, data=>{
-        data = JSON.parse(data.body)
-        if(data.endGame){
-          dispatcher(showFinalScorePage())
-          dispatcher(endGame())
+      con.subscribe(`/topic/endgame/${roomId}`, (data) => {
+        data = JSON.parse(data.body);
+        if (data.endGame) {
+          dispatcher(showFinalScorePage());
+          dispatcher(endGame());
         }
-      })
+      });
       con.subscribe(`/topic/newplayer/${roomId}`, (player) => {
         player = JSON.parse(player.body);
         dispatcher(addPlayer(player));
@@ -123,13 +137,14 @@ const Canvas = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         roomId: roomId,
-        maxRounds: 3,
+        maxRounds: maximumRounds,
+        drawTime: drawTime,
       }),
     });
   };
 
   const startTurn = (word) => {
-    dispatcher(setWord(word))
+    dispatcher(setWord(word));
     fetch(`${import.meta.env.VITE_WEB_SERVICE_URL}/game/turn/start`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -140,36 +155,77 @@ const Canvas = () => {
     });
   };
 
+  useEffect(() => {
+    sketchPad.current.clear();
+  }, [turn]);
+
   useEffect(()=>{
-    sketchPad.current.clear()
-  }, [turn])
+    setTimeout(()=>{sendSketch(sketchPad.current.getSaveData())}, 1000)
+    ;
+  }, [players])
+
 
   return (
     <section id="canvasContainer" className="w-full h-[60%] relative">
       {/* Shown when the game is yet to start */}
       {finalScorePageVisible && <FinalScorePage />}
-      {scorePageVisible &&  <ScorePage />}
+      {scorePageVisible && !finalScorePageVisible && <ScorePage />}
       {!gameRunning && !finalScorePageVisible && (
-        <div className=" z-20 absolute h-full w-full bg-[#000000b1] flex justify-center items-center flex-col">
+        <div className=" text-white curtainDown z-20 absolute h-full w-full bg-[#000000b1] flex justify-center items-center flex-col">
           {owner === playerId ? (
-            <button
-              onClick={() => {
-                if (players.length === 1) {
-                  toast.info("Waiting for more players to join.");
-                } else startGame();
-              }}
-              className="px-3 py-2 font-bold hover:red-400 active:bg-[#fad8de] hover:bg-[#fcb1be] transition-colors bg-pink text-white"
-            >
-              Start
-            </button>
+            <>
+              <span className="mb-6">Maximum allowed players: 8</span>
+              <span className="mb-6">
+                Maximum Rounds:
+                <select
+                  defaultValue={3}
+                  onChange={(e) => setMaximumRounds(e.target.value)}
+                  className="ml-1 bg-white text-black rounded-sm w-8"
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                </select>
+              </span>
+              <span className="mb-6">
+                Drawtime:
+                <select
+                  defaultValue={90}
+                  onChange={(e) => setDrawTime(e.target.value)}
+                  className="ml-1 bg-white text-black rounded-sm w-18"
+                >
+                  <option value="20">20</option>
+                  <option value="60">60</option>
+                  <option value="90">90</option>
+                  <option value="120">120</option>
+                  <option value="200">200</option>
+                  <option value="240">240</option>
+                </select>
+              </span>
+              <button
+                onClick={() => {
+                  if (players.length === 1) {
+                    toast.info("Waiting for more players to join.");
+                  } else startGame();
+                }}
+                className="px-3 py-2 font-bold hover:red-400 active:bg-[#fad8de] hover:bg-[#fcb1be] transition-colors bg-pink text-white"
+              >
+                Start
+              </button>
+            </>
           ) : (
             <span className="text-white">Ask the owner to start the game</span>
           )}
         </div>
       )}
       {/* Shown when the user with turn choosing a word */}
-      {gameRunning && !turnRunning && !scorePageVisible &&(
-        <div className="z-20 absolute h-full w-full bg-[#000000b2] flex justify-center items-center flex-col">
+      {gameRunning && !turnRunning && !scorePageVisible && (
+        <div className=" curtainDown z-20 absolute h-full w-full bg-[#000000a3] flex justify-center items-center flex-col">
           {turn === playerId ? (
             <div className="w-fit h-fit flex flex-row justify-center items-center">
               <input
@@ -206,9 +262,6 @@ const Canvas = () => {
         </div>
       )}
       <div
-        onClick={() => {
-          if (playerId == turn) sendSketch(sketchPad.current.getSaveData());
-        }}
         className="w-full h-full cursor-pointer flex items-end justify-center"
       >
         <div className="w-full h-full">
@@ -221,8 +274,9 @@ const Canvas = () => {
             immediateLoading={true}
             canvasHeight={height}
             canvasWidth={width}
-            catenaryColor={playerId!=turn?'white':strokeColor}
+            catenaryColor={playerId != turn ? "white" : strokeColor}
             disabled={playerId != turn}
+            onChange={()=>sendSketch(sketchPad.current.getSaveData())}
           />
         </div>
 
@@ -300,4 +354,3 @@ const Canvas = () => {
 };
 
 export default Canvas;
-

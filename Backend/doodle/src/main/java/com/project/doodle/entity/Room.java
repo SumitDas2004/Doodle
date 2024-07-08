@@ -22,6 +22,7 @@ public class Room {
     private int owner;
     private boolean gameRunning;
     private boolean turnRunning;
+    private int drawTime;
     private Queue<Integer> q;
 
     public CreateRoomResponseDTO toCreateRoomResponseDTO(int playerId, String playerName) {

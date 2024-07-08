@@ -41,7 +41,7 @@ public class WebSocketMessageController {
                 message.setBody("");
 
                 //Calculating and updating the score of the guesser
-                int score = (int)((room.getTurnEndsAt()-System.currentTimeMillis())/10000);
+                int score = (int)((room.getTurnEndsAt()-System.currentTimeMillis())/1000);
                 if(score>=50)score+=300;
                 else if(score>=40)score+=200;
                 else if(score>=30)score+=100;

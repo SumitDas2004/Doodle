@@ -4,6 +4,7 @@ import com.project.doodle.constants.DataStore;
 import com.project.doodle.controller.WebSocketMessageController;
 import com.project.doodle.dto.game.StartGameRequestDTO;
 import com.project.doodle.dto.game.StartTurnRequestDTO;
+import com.project.doodle.entity.Player;
 import com.project.doodle.entity.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,12 +55,16 @@ public class GameService {
         if(room.getPlayers().size()==1){
             wsController.endTurn(roomId, room.getPlayers(), room.getWord(), room.getOwner());
             room.setTurn(room.getQ().peek());
+            for(Player player:room.getPlayers())
+                player.setScore(0);
             wsController.sendRoomInformation(room);
             wsController.endGame(room.getId());
             room.setWord("");
             return ;
         }
         if(room.getCurRound()>room.getMaxRounds()){
+            for(Player player:room.getPlayers())
+                player.setScore(0);
             wsController.endGame(room.getId());
             return ;
         }

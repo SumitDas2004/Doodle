@@ -96,12 +96,17 @@ const roomInfoSlice = createSlice({
         },
         rightGuess:(state)=>{
             state.rightGuesses+=1 
+        },
+        resetScores:(state)=>{
+            state.players.forEach((player)=>{
+                player.score = 0;
+            })
         }
     }
 })
 
 
-export const {endGame, endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord, rightGuess} = roomInfoSlice.actions
+export const {endGame, endTurn, changeRoomInfo, addPlayer, updatePlayerDetails, removePlayer, setOwner, startGame, setGuessedWord, setWord, rightGuess, resetScores} = roomInfoSlice.actions
 
 
 export default roomInfoSlice.reducer

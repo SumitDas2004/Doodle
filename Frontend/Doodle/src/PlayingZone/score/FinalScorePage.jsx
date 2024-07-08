@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { hideFinalScorePage } from '../../reduxStore/scorePage'
-import { endGame } from '../../reduxStore/roomInfo'
+import { endGame, resetScores } from '../../reduxStore/roomInfo'
 
 
 const FinalScorePage = () => {
@@ -13,6 +13,7 @@ const FinalScorePage = () => {
     dispatch(endGame())
     setTimeout(() => {
       if(timer===0){
+        dispatch(resetScores())
         dispatch(hideFinalScorePage())
         return ;
       }
@@ -22,6 +23,11 @@ const FinalScorePage = () => {
 
   useEffect(()=>{
   }, [])
+
+  const positionIcons = ['https://img.icons8.com/?size=100&id=BG0raGiettHF&format=png&color=000000',
+    'https://img.icons8.com/?size=100&id=YWZ0y0ocSkyv&format=png&color=000000',
+    'https://img.icons8.com/?size=100&id=jQphvKH4JywQ&format=png&color=000000'
+  ]
 
   return (
     <div className="  curtainDown z-50 h-full w-full absolute bg-[#000000b9] font-semibold flex justify-center items-center flex-col">
@@ -33,6 +39,7 @@ const FinalScorePage = () => {
         players.map((player, ind) => (
           <span key={ind}>
             <div className="flex">
+              {ind<=2?<span className='h-6 w-6'><img src={positionIcons[ind]} /></span>:<span className='h-6 w-6 text-center text-white'>{ind+1}th</span>}
               <span className="text-white">{player.name + ": "}</span>
               <span
                 className={`${

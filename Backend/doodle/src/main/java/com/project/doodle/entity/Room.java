@@ -25,7 +25,7 @@ public class Room {
     private int drawTime;
     private Queue<Integer> q;
 
-    public CreateRoomResponseDTO toCreateRoomResponseDTO(int playerId, String playerName) {
+    public CreateRoomResponseDTO toCreateRoomResponseDTO(int playerId, String playerName, long turnEndsAt) {
         return CreateRoomResponseDTO.builder()
                 .roomId(this.id)
                 .players(this.getPlayers())
@@ -34,7 +34,7 @@ public class Room {
                 .gameRunning(this.gameRunning)
                 .curRound(this.curRound)
                 .maxRounds(this.maxRounds)
-                .turnEndsAt(0)
+                .turnEndsAt(turnEndsAt)
                 .wordLen(this.word==null?0:this.word.length())
                 .turn(this.turn)
                 .owner(this.owner)

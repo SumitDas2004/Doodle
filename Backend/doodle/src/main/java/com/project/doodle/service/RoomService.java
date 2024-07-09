@@ -57,7 +57,7 @@ public class RoomService {
                 .gameRunning(false)
                 .build();
         DataStore.currentRooms.put(newRoomId, newRoom);
-        return newRoom.toCreateRoomResponseDTO(player.getId(), player.getName());
+        return newRoom.toCreateRoomResponseDTO(player.getId(), player.getName(), 0);
     }
 
     public CreateRoomResponseDTO joinRoom(JoinRoomDTO request){
@@ -73,7 +73,7 @@ public class RoomService {
                     .avatar(request.getPlayerAvatar())
                     .build();
             room.getPlayers().add(player);
-            return room.toCreateRoomResponseDTO(player.getId(), player.getName());
+            return room.toCreateRoomResponseDTO(player.getId(), player.getName(), room.getTurnEndsAt());
         }
     }
 

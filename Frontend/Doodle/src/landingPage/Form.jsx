@@ -22,7 +22,7 @@ const Form = ({ toggleFormState, formState }) => {
                 <span className="pacifico-regular font-bold text-4xl mb-6">
                   Doodle
                 </span>
-                <span className="inline-block break-all font-white w-max text-white  font-bold mb-6">Don't have a roomId?</span>
+                <span className="inline-block break-all font-white w-11/12 text-white  font-bold mb-6">Don't have a roomId?</span>
                 
                 <button
                   onClick={toggleFormState}
@@ -37,7 +37,7 @@ const Form = ({ toggleFormState, formState }) => {
                 <span className="pacifico-regular font-bold text-4xl mb-6">
                   Doodle
                 </span>
-                <span className="inline-block break-all font-white w-max text-white  font-bold mb-6">Have a roomId?</span>
+                <span className="inline-block break-all font-white w-11/12 text-white  font-bold mb-6">Have a roomId?</span>
                 <button
                   onClick={toggleFormState}
                   className=" rounded-sm px-2 w-max py-2 border-white border-2 font-semibold text-white z-10 cursor-pointer"

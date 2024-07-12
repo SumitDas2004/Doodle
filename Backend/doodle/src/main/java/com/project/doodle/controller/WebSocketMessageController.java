@@ -42,10 +42,11 @@ public class WebSocketMessageController {
 
                 //Calculating and updating the score of the guesser
                 int score = (int)((room.getTurnEndsAt()-System.currentTimeMillis())/1000);
-                if(score>=50)score+=300;
-                else if(score>=40)score+=200;
-                else if(score>=30)score+=100;
-                else if(score>10)score+=70;
+                int percentage = score/room.getDrawTime()*100;
+                if(percentage>=90)score+=300;
+                else if(percentage>=75)score+=200;
+                else if(score>=55)score+=100;
+                else if(score>30)score+=70;
                 else score+=50;
 
                 Player guesser = findPlayerById(room.getPlayers(), message.getSenderId());

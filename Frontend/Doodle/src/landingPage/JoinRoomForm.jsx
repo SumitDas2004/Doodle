@@ -105,9 +105,7 @@ const JoinRoomForm = ({ formState }) => {
           />
           <input
             style={{ transition: "all 500ms" }}
-            type="text"
-            name=""
-            id=""
+            type="number"
             className={`w-[85%] mb-6 px-3 py-2 border-2 text-sm border-gray-400 relative rounded-sm ${
               formState === "create" ? "left-0" : "-left-[100%]"
             }`}
